@@ -1,7 +1,32 @@
-# HANDOFF · ATLAS · ГПР-движок (gpr-engine)
+# HANDOFF · ATLAS · ГПР-движок (atlas-gpr)
 
-Передача проекта для новой сессии. Читай этот файл + `README.md` (рядом) первыми.
-Парный проект — мокапы/ролевые экраны: `../HANDOFF.md`.
+Передача проекта для новой сессии. Читай этот файл первым.
+
+---
+
+## 0. АКТУАЛЬНОЕ СОСТОЯНИЕ (2026-06-08) — ЧИТАЙ ПЕРВЫМ
+
+**Это отдельный репозиторий** `bakytgulkamshybaeva-ops/atlas-gpr` (вынесен из muraplan-mockup).
+**Live:** https://bakytgulkamshybaeva-ops.github.io/atlas-gpr/ · **локально:** `~/Documents/Claude/atlas-gpr/` (index.html в КОРНЕ). Push: `GIT_SSH_COMMAND="ssh -i ~/.ssh/sales_companion_ed25519 -o IdentitiesOnly=yes" git push` (владелец ops).
+
+**Что построено (всё LIVE):**
+- **App-shell:** дерево слева (Портфель/Снабжение → ЖК → блоки, фильтр+поиск) + детали справа. JS: `buildSidebar / viewPortfolio / viewObject / viewBlock / viewSupply`.
+- **Реальный ГПР из MS Project** на каждый блок: `mpp/*.html` (39, WBS + связи Finish→Start + критпуть + hover-подсветка), встроены iframe + кнопка «во весь экран» (overlay).
+- **Правда из .mpp везде:** готовность, **настоящий критпуть**, прогноз сдачи (вердикт успеваем/просрочка), «что критично сейчас» (просроч. работы критпути по портфелю), системные узкие места (разделы на критпути × блоков). Реф.дата снимка = **28.05.2026**.
+- **Снабжение-мост** (📦 в дереве): «заказать-до = старт − срок поставки» для длинных позиций (лифты/металл/окна/двери/слаботочка/насосы/щиты). Lead-времена — ОЦЕНКА, калибровать с PM.
+
+**Данные:** `gpr_data.json` (PDF блок-уровень: план/факт/работы) + константы `MPP{}` (готовность/критпуть/ct) и `SUPPLY[]` — вшиты в `index.html`. Источник .mpp/PDF: `~/Documents/Claude/gpr-source/`.
+
+**Тулинг / пересборка** (`mpp_tools/`):
+- `MppExtract.java` — .mpp → JSON через **MPXJ**. ⚠️ ЗАПУСКАТЬ ОТДЕЛЬНЫМ процессом `java` (jpype-в-python падает SIGBUS без JIT-entitlement). Нужен JDK (был в `/tmp/jdk21`; если нет — скачать Adoptium 21 aarch64; `pip install --user mpxj jpype` для jar-ов, путь jar-ов `~/Library/Python/3.9/.../mpxj/lib/*.jar`). Пакет **`org.mpxj`**. Имена .mpp в NFD → `unicodedata.normalize('NFC')`.
+- `build_mpp.py` — все .mpp → `mpp/<oid>-<spot>.html` по шаблону. `build_summary.py` — обогащает `MPP{}` + считает `SUPPLY[]`, инжектит в index.html. `parse_gpr.py` — PDF → gpr_data.json.
+
+**ОСТАЛОСЬ (выбрано PM, по порядку):**
+1. **Живой движок (приём факта)** — сейчас готовность = статичный снимок из .mpp; дать обновлять факт работы (ручной ввод %, localStorage) → готовность/прогноз/«что критично»/снабжение пересчитываются вживую. Это возврат к исходной идее «живой план↔факт».
+2. **Обновление данных одним прогоном** — новые `.mpp`/отчёт → один скрипт пересобирает все блоки + реестр + публикует.
+3. Калибровка lead-времён снабжения с PM (или подключить реальный график материалов). Настоящий сетевой CPM УЖЕ есть (из .mpp).
+
+**Gotchas:** preview-песочница флакует/дрейфует — рендерить локально `python3 -m http.server 8810` в atlas-gpr + preview top-nav на `http://127.0.0.1:8810/`. Память: `MEMORY.md → muraplan-mockup-project` (бул про gpr-engine + atlas-gpr).
 
 ---
 
