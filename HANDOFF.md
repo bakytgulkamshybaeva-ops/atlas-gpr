@@ -12,9 +12,11 @@
 
 ## 2. Где
 - **Файлы:** `gpr-engine/index.html` (самодостаточный: вшитые данные + движок + UI) · `parse_gpr.py` (PDF→`gpr_data.json`, `--validate`/`--build`) · `gpr_data.json` (1322 работы) · `VALIDATION.md` · `README.md` + этот HANDOFF.
-- **Сейчас живёт подпроектом** внутри репо `dakeshisan/muraplan-mockup` (чтобы публиковаться на существующих Pages). **Кандидат на вынос в отдельный репозиторий** при переходе к Фазе 2.
-- **Live:** https://dakeshisan.github.io/muraplan-mockup/gpr-engine/
-- **Локально:** `~/Documents/Claude/muraplan-mockup/gpr-engine/`
+- **Отдельный репозиторий** `bakytgulkamshybaeva-ops/atlas-gpr` (вынесен из muraplan-mockup 2026-06-08 для развязки с параллельной разработкой). `index.html` в КОРНЕ → чистый Pages-URL. Push: SSH-ключ `~/.ssh/sales_companion_ed25519` (владелец ops).
+- **Live:** https://bakytgulkamshybaeva-ops.github.io/atlas-gpr/
+- **Локально:** `~/Documents/Claude/atlas-gpr/` (index.html и всё — в корне, без подпапки gpr-engine).
+- **Прежняя копия** (подпроект) осталась в `dakeshisan/muraplan-mockup/gpr-engine/` — устаревает.
+- **Реальный ГПР из MS Project:** `mpp/*.html` (39 блоков, WBS + связи F→S + критпуть) + тулинг `mpp_tools/` (MppExtract.java через MPXJ, build_mpp.py, build_summary.py).
 - **Исходные данные (НЕ в репо, public!):** `~/Documents/Claude/gpr-source/` — оригинальный zip + 43 файла (4 PDF-отчёта 28.05.2026 + .mpp MS Project, корректные имена).
 
 ## 3. ГЛАВНЫЙ ПРИНЦИП (не нарушать)
