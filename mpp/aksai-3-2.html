@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ГПР — ЖК «Аксай резорт» — Пятно 3,2</title>
+<style>
+:root{--navy:#284157;--teal:#007484;--gold:#CFB372;--cream:#F7F5EE;--ink:#1d2733;
+--done:#007484;--prog:#CFB372;--todo:#d7dde3;--crit:#c0392b;--arrow:#9aa6b2;--grid:#eef1f4;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:#fff;}
+header{background:var(--navy);color:#fff;padding:14px 20px;}
+header h1{margin:0;font-size:18px;font-weight:700;}
+header .sub{font-size:12px;opacity:.8;margin-top:3px;}
+.bar-tools{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:12px;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+.legend i{display:inline-block;width:14px;height:12px;border-radius:2px;vertical-align:middle;margin-right:5px;}
+.legend .a-demo{width:22px;height:0;border:0;border-top:2px solid var(--arrow);position:relative;}
+.zoom button{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);
+border-radius:6px;padding:3px 10px;cursor:pointer;font-size:13px;}
+.zoom button:hover{background:rgba(255,255,255,.28);}
+.hint{opacity:.8;}
+#scroll{overflow:auto;height:calc(100vh - 132px);position:relative;}
+#grid{position:relative;}
+.hrow{position:sticky;top:0;z-index:20;display:flex;height:46px;background:#fff;box-shadow:0 1px 0 #dfe4ea;}
+.corner{position:sticky;left:0;z-index:21;background:#fff;border-right:2px solid #dfe4ea;
+display:flex;align-items:flex-end;}
+.corner div{display:flex;width:100%;font-size:11px;font-weight:700;color:#5a6b7b;}
+.corner .c1{width:46px;padding:0 4px 6px;}.corner .c2{flex:1;padding:0 6px 6px;}
+.corner .c3{width:52px;padding:0 4px 6px;text-align:right;}
+.months{position:relative;}
+.mhead{position:absolute;top:0;height:46px;border-left:1px solid #dfe4ea;font-size:11px;color:#5a6b7b;
+padding:5px 0 0 5px;overflow:hidden;}
+.mhead b{font-weight:700;color:var(--navy);}
+.body{position:relative;}
+.row{display:flex;height:24px;align-items:center;}
+.row:nth-child(even) .lbl{background:#fbfcfd;}
+.lbl{position:sticky;left:0;z-index:10;display:flex;align-items:center;height:24px;background:#fff;
+border-right:2px solid #dfe4ea;cursor:default;}
+.lbl .n{width:46px;font-size:10px;color:#8b97a3;text-align:center;flex:none;}
+.lbl .nm{flex:1;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:6px;}
+.lbl .pc{width:52px;font-size:10.5px;text-align:right;padding-right:8px;color:#5a6b7b;flex:none;}
+.lbl.sum .nm{font-weight:700;}
+.lbl.lvl1 .nm,.lbl.lvl2 .nm{color:var(--navy);}
+.lane{position:relative;flex:1;height:24px;}
+#overlay{position:absolute;z-index:5;pointer-events:none;}
+#arrows{position:absolute;top:0;left:0;overflow:visible;}
+.bar{position:absolute;height:13px;border-radius:3px;pointer-events:auto;cursor:pointer;
+display:flex;align-items:center;overflow:hidden;border:1px solid rgba(0,0,0,.12);}
+.bar .fill{height:100%;border-radius:2px 0 0 2px;}
+.bar.done .fill{background:var(--done);}
+.bar.prog .fill{background:var(--prog);}
+.bar.todo{background:#fff;border-style:dashed;}
+.bar.done,.bar.prog{background:#eef2f4;}
+.bar.sumbar{height:7px;background:var(--navy);border:none;border-radius:2px;}
+.bar.sumbar::before,.bar.sumbar::after{content:"";position:absolute;top:0;width:0;height:0;
+border-top:7px solid var(--navy);}
+.bar.sumbar::before{left:0;border-right:5px solid transparent;}
+.bar.sumbar::after{right:0;border-left:5px solid transparent;}
+.bar.critbar{box-shadow:0 0 0 1.5px var(--crit);}
+path.arr{fill:none;stroke:var(--arrow);stroke-width:1.3;}
+path.arr.crit{stroke:var(--crit);stroke-width:1.4;opacity:.55;}
+.dim path.arr{opacity:.08;}
+.dim .bar{opacity:.25;}
+.dim .lbl{opacity:.4;}
+path.arr.hl{stroke:var(--navy);stroke-width:2.2;opacity:1 !important;}
+.bar.hl{opacity:1 !important;box-shadow:0 0 0 2px var(--navy);z-index:8;}
+.lbl.hl{opacity:1 !important;background:#eaf3f5 !important;}
+#tip{position:fixed;z-index:50;pointer-events:none;background:#fff;border:1px solid #cfd6dd;
+border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.16);padding:9px 11px;font-size:12px;max-width:300px;display:none;}
+#tip b{color:var(--navy);}
+#tip .r{color:#5a6b7b;margin-top:3px;}
+#tip .chip{display:inline-block;background:var(--cream);border-radius:4px;padding:1px 6px;margin:2px 3px 0 0;font-size:11px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>График производства работ — ЖК «Аксай резорт» — Пятно 3,2</h1>
+  <div class="sub">Источник: MS Project «ЖК Аксай 3,2.mpp» · период 2025-11-29–2026-06-21 · готовность 13% · связей: 54 (Finish→Start) · критпуть: Железобетонный каркас , Общестроительные работы, Благоустройства</div>
+  <div class="bar-tools">
+    <div class="legend">
+      <span><i style="background:var(--navy)"></i>этап</span>
+      <span><i style="background:var(--done)"></i>выполнено</span>
+      <span><i style="background:var(--gold)"></i>в работе</span>
+      <span><i style="background:#fff;border:1px dashed #aaa"></i>не начато</span>
+      <span><i style="background:#fff;box-shadow:0 0 0 1.5px var(--crit)"></i>крит. путь</span>
+      <span><span class="a-demo"></span> взаимосвязь</span>
+    </div>
+    <div class="zoom">масштаб: <button data-z="-1">−</button> <button data-z="1">+</button></div>
+    <div class="hint">наведите на работу — подсветятся её связи</div>
+  </div>
+</header>
+<div id="scroll"><div id="grid">
+  <div class="hrow">
+    <div class="corner" style="width:440px"><div><span class="c1">№</span><span class="c2">Наименование работы</span><span class="c3">%</span></div></div>
+    <div class="months" id="months"></div>
+  </div>
+  <div class="body" id="body"></div>
+  <div id="overlay"><svg id="arrows"></svg><div id="bars"></div></div>
+</div></div>
+<div id="tip"></div>
+<script>
+const TASKS=[{"id":1,"wbs":"1","level":1,"cat":null,"name":"ЖК \"Аксай резорт\"","summary":true,"days":205,"start":"2025-11-29","finish":"2026-06-21","pct":0.13,"crit":true,"pred":[]},{"id":2,"wbs":"1.1","level":2,"cat":null,"name":"Пятно 3,2","summary":true,"days":205,"start":"2025-11-29","finish":"2026-06-21","pct":0.13,"crit":true,"pred":[]},{"id":3,"wbs":"1.1.1","level":3,"cat":"Земляные работы","name":"Земляные работы","summary":true,"days":20,"start":"2025-11-29","finish":"2025-12-18","pct":1.0,"crit":false,"pred":[]},{"id":4,"wbs":"1.1.1.1","level":4,"cat":"Земляные работы","name":"Котлован","summary":false,"days":20,"start":"2025-11-29","finish":"2025-12-18","pct":1.0,"crit":false,"pred":[]},{"id":5,"wbs":"1.1.2","level":3,"cat":"Бетонные работы","name":"Бетонные работы","summary":true,"days":30,"start":"2025-12-19","finish":"2026-01-17","pct":1.0,"crit":false,"pred":[]},{"id":6,"wbs":"1.1.2.1","level":4,"cat":"Бетонные работы","name":"Подбетонка","summary":false,"days":10,"start":"2025-12-19","finish":"2025-12-28","pct":1.0,"crit":false,"pred":[4]},{"id":7,"wbs":"1.1.2.2","level":4,"cat":"Бетонные работы","name":" Фундамент","summary":false,"days":20,"start":"2025-12-29","finish":"2026-01-17","pct":1.0,"crit":false,"pred":[6]},{"id":8,"wbs":"1.1.3","level":3,"cat":"Железобетонный каркас ","name":"Железобетонный каркас ","summary":true,"days":50,"start":"2026-01-18","finish":"2026-03-08","pct":0.68,"crit":true,"pred":[]},{"id":9,"wbs":"1.1.3.1","level":4,"cat":"Железобетонный каркас ","name":"1 этаж","summary":false,"days":20,"start":"2026-01-18","finish":"2026-02-06","pct":1.0,"crit":false,"pred":[7]},{"id":10,"wbs":"1.1.3.2","level":4,"cat":"Железобетонный каркас ","name":"2 этаж","summary":false,"days":20,"start":"2026-02-07","finish":"2026-02-26","pct":0.7,"crit":true,"pred":[9]},{"id":11,"wbs":"1.1.3.3","level":4,"cat":"Железобетонный каркас ","name":"Выход на кровлю","summary":false,"days":10,"start":"2026-02-27","finish":"2026-03-08","pct":0.0,"crit":false,"pred":[10]},{"id":12,"wbs":"1.1.4","level":3,"cat":"Гидроизоляционные работы","name":"Гидроизоляционные работы","summary":true,"days":21,"start":"2026-02-27","finish":"2026-03-19","pct":0.0,"crit":true,"pred":[]},{"id":13,"wbs":"1.1.4.1","level":4,"cat":"Гидроизоляционные работы","name":"Устройство гидроизоляции фундамента, стен цокольного этажа","summary":false,"days":15,"start":"2026-02-27","finish":"2026-03-13","pct":0.0,"crit":false,"pred":[10]},{"id":14,"wbs":"1.1.4.2","level":4,"cat":"Гидроизоляционные работы","name":"Обратная засыпка пазуха котлавана","summary":false,"days":6,"start":"2026-03-14","finish":"2026-03-19","pct":0.0,"crit":false,"pred":[13]},{"id":15,"wbs":"1.1.5","level":3,"cat":"Кровля","name":"Кровля","summary":true,"days":57,"start":"2026-03-09","finish":"2026-05-04","pct":0.0,"crit":true,"pred":[]},{"id":16,"wbs":"1.1.5.1","level":4,"cat":"Кровля","name":"Вент шахта (каменная кладка)","summary":false,"days":10,"start":"2026-03-09","finish":"2026-03-18","pct":0.0,"crit":false,"pred":[11]},{"id":17,"wbs":"1.1.5.2","level":4,"cat":"Кровля","name":"Утепление","summary":false,"days":6,"start":"2026-03-19","finish":"2026-03-24","pct":0.0,"crit":false,"pred":[16]},{"id":18,"wbs":"1.1.5.3","level":4,"cat":"Кровля","name":"Стяжка","summary":false,"days":10,"start":"2026-03-25","finish":"2026-04-03","pct":0.0,"crit":false,"pred":[17]},{"id":19,"wbs":"1.1.5.4","level":4,"cat":"Кровля","name":"Гидроизоляция кровли ","summary":false,"days":15,"start":"2026-04-04","finish":"2026-04-18","pct":0.0,"crit":false,"pred":[18]},{"id":20,"wbs":"1.1.5.5","level":4,"cat":"Кровля","name":"Монтаж  парапет слив СЛ-1,2,3,4","summary":false,"days":10,"start":"2026-04-19","finish":"2026-04-28","pct":0.0,"crit":false,"pred":[19]},{"id":21,"wbs":"1.1.5.6","level":4,"cat":"Кровля","name":"Вентиляционные зонты","summary":false,"days":6,"start":"2026-04-29","finish":"2026-05-04","pct":0.0,"crit":false,"pred":[20]},{"id":22,"wbs":"1.1.6","level":3,"cat":"Общестроительные работы","name":"Общестроительные работы","summary":true,"days":50,"start":"2026-02-27","finish":"2026-04-17","pct":0.0,"crit":true,"pred":[]},{"id":23,"wbs":"1.1.6.1","level":4,"cat":"Общестроительные работы","name":"Стены наружние","summary":true,"days":20,"start":"2026-02-27","finish":"2026-03-18","pct":0.0,"crit":true,"pred":[]},{"id":24,"wbs":"1.1.6.1.1","level":5,"cat":"Общестроительные работы","name":"Кладка наружных стен","summary":false,"days":20,"start":"2026-02-27","finish":"2026-03-18","pct":0.0,"crit":true,"pred":[10]},{"id":25,"wbs":"1.1.6.2","level":4,"cat":"Общестроительные работы","name":" Вент. Фасада ","summary":true,"days":25,"start":"2026-03-19","finish":"2026-04-12","pct":0.0,"crit":true,"pred":[]},{"id":26,"wbs":"1.1.6.2.1","level":5,"cat":"Общестроительные работы","name":"Устройство фасада","summary":false,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":true,"pred":[24]},{"id":27,"wbs":"1.1.6.2.2","level":5,"cat":"Общестроительные работы","name":"Решетки кондиционеров","summary":false,"days":10,"start":"2026-04-03","finish":"2026-04-12","pct":0.0,"crit":false,"pred":[26]},{"id":28,"wbs":"1.1.6.3","level":4,"cat":"Общестроительные работы","name":"Монтаж окон","summary":true,"days":30,"start":"2026-03-19","finish":"2026-04-17","pct":0.0,"crit":true,"pred":[]},{"id":29,"wbs":"1.1.6.3.1","level":5,"cat":"Общестроительные работы","name":"Монтаж оконных профилей","summary":false,"days":14,"start":"2026-03-19","finish":"2026-04-01","pct":0.0,"crit":false,"pred":[24]},{"id":30,"wbs":"1.1.6.3.2","level":5,"cat":"Общестроительные работы","name":"Монтаж устройств стеклопакета ","summary":false,"days":10,"start":"2026-04-02","finish":"2026-04-11","pct":0.0,"crit":false,"pred":[29]},{"id":31,"wbs":"1.1.6.3.3","level":5,"cat":"Общестроительные работы","name":"Монтаж подоконников, фурнитуры","summary":false,"days":6,"start":"2026-04-12","finish":"2026-04-17","pct":0.0,"crit":false,"pred":[30]},{"id":32,"wbs":"1.1.6.4","level":4,"cat":"Общестроительные работы","name":"Двери","summary":true,"days":16,"start":"2026-03-09","finish":"2026-03-24","pct":0.0,"crit":true,"pred":[]},{"id":33,"wbs":"1.1.6.4.1","level":5,"cat":"Общестроительные работы","name":"Металлические двери (входные в квартиру)","summary":false,"days":10,"start":"2026-03-09","finish":"2026-03-18","pct":0.0,"crit":false,"pred":[11]},{"id":34,"wbs":"1.1.6.4.2","level":5,"cat":"Общестроительные работы","name":"Монтаж дверной фурнитуры ","summary":false,"days":6,"start":"2026-03-19","finish":"2026-03-24","pct":0.0,"crit":false,"pred":[33]},{"id":35,"wbs":"1.1.6.5","level":4,"cat":"Общестроительные работы","name":"Металлоконструкции","summary":true,"days":14,"start":"2026-03-20","finish":"2026-04-02","pct":0.0,"crit":true,"pred":[]},{"id":36,"wbs":"1.1.6.5.1","level":5,"cat":"Общестроительные работы","name":"Монтаж приямок ","summary":false,"days":7,"start":"2026-03-20","finish":"2026-03-26","pct":0.0,"crit":false,"pred":[14]},{"id":37,"wbs":"1.1.6.5.2","level":5,"cat":"Общестроительные работы","name":"Монтаж козырьков ","summary":false,"days":5,"start":"2026-03-29","finish":"2026-04-02","pct":0.0,"crit":false,"pred":[26]},{"id":38,"wbs":"1.1.7","level":3,"cat":"Инженерные работы","name":"Инженерные работы","summary":true,"days":27,"start":"2026-03-19","finish":"2026-04-14","pct":0.0,"crit":true,"pred":[]},{"id":39,"wbs":"1.1.7.1","level":4,"cat":"Инженерные работы","name":"Отопление","summary":true,"days":27,"start":"2026-03-19","finish":"2026-04-14","pct":0.0,"crit":true,"pred":[]},{"id":40,"wbs":"1.1.7.1.1","level":5,"cat":"Инженерные работы","name":"Вертикальная разводка труб (отопление)","summary":false,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":false,"pred":[24]},{"id":41,"wbs":"1.1.7.1.2","level":5,"cat":"Инженерные работы","name":"Монтаж радиаторов, счетчиков, терморегулирующей и запорной арматуры, оборудования","summary":false,"days":12,"start":"2026-04-03","finish":"2026-04-14","pct":0.0,"crit":false,"pred":[40]},{"id":42,"wbs":"1.1.7.1.3","level":5,"cat":"Инженерные работы","name":"Тепловой пункт","summary":false,"days":6,"start":"2026-04-03","finish":"2026-04-08","pct":0.0,"crit":false,"pred":[40]},{"id":43,"wbs":"1.1.7.2","level":4,"cat":"Инженерные работы","name":"Вентиляция","summary":true,"days":21,"start":"2026-03-19","finish":"2026-04-08","pct":0.0,"crit":true,"pred":[]},{"id":44,"wbs":"1.1.7.2.1","level":5,"cat":"Инженерные работы","name":"Монтаж венткоробов","summary":false,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":false,"pred":[24]},{"id":45,"wbs":"1.1.7.2.2","level":5,"cat":"Инженерные работы","name":"Монтаж вентиляторов забора, подпора воздуха, решеток, оборудования","summary":false,"days":6,"start":"2026-04-03","finish":"2026-04-08","pct":0.0,"crit":false,"pred":[44]},{"id":46,"wbs":"1.1.7.3","level":4,"cat":"Инженерные работы","name":"Хоз. питьевой водопровод","summary":true,"days":25,"start":"2026-03-19","finish":"2026-04-12","pct":0.0,"crit":true,"pred":[]},{"id":47,"wbs":"1.1.7.3.1","level":5,"cat":"Инженерные работы","name":"Вертикальная разводка труб (водопровод)","summary":false,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":false,"pred":[24]},{"id":48,"wbs":"1.1.7.3.2","level":5,"cat":"Инженерные работы","name":"Монтаж запорной арматуры, счетчиков, оборудования.","summary":false,"days":10,"start":"2026-04-03","finish":"2026-04-12","pct":0.0,"crit":false,"pred":[47]},{"id":49,"wbs":"1.1.7.3.3","level":5,"cat":"Инженерные работы","name":"Насосная станция хоз. Питьевого снабжения","summary":false,"days":6,"start":"2026-04-03","finish":"2026-04-08","pct":0.0,"crit":false,"pred":[47]},{"id":50,"wbs":"1.1.7.4","level":4,"cat":"Инженерные работы","name":"Противопожарный водопровод","summary":true,"days":22,"start":"2026-03-19","finish":"2026-04-09","pct":0.0,"crit":true,"pred":[]},{"id":51,"wbs":"1.1.7.4.1","level":5,"cat":"Инженерные работы","name":"Монтаж труб (пр-ный водопровод)","summary":false,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":false,"pred":[16]},{"id":52,"wbs":"1.1.7.4.2","level":5,"cat":"Инженерные работы","name":"Монтаж пожарных ящиков, кранов, автоматики","summary":false,"days":7,"start":"2026-04-03","finish":"2026-04-09","pct":0.0,"crit":false,"pred":[51]},{"id":53,"wbs":"1.1.7.5","level":4,"cat":"Инженерные работы","name":"Канализация бытовая","summary":true,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":true,"pred":[]},{"id":54,"wbs":"1.1.7.5.1","level":5,"cat":"Инженерные работы","name":"Монтаж вертикальных/горизонтальных стояков, сан фаянс (канализация)","summary":false,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":false,"pred":[24]},{"id":55,"wbs":"1.1.7.6","level":4,"cat":"Инженерные работы","name":"Канализация ливневая","summary":true,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":true,"pred":[]},{"id":56,"wbs":"1.1.7.6.1","level":5,"cat":"Инженерные работы","name":"Монтаж водостоков","summary":false,"days":10,"start":"2026-03-19","finish":"2026-03-28","pct":0.0,"crit":false,"pred":[16]},{"id":57,"wbs":"1.1.7.6.2","level":5,"cat":"Инженерные работы","name":"Монтаж ливневых воронок","summary":false,"days":5,"start":"2026-03-29","finish":"2026-04-02","pct":0.0,"crit":false,"pred":[56]},{"id":58,"wbs":"1.1.7.7","level":4,"cat":"Инженерные работы","name":"Электромонтажные работы","summary":true,"days":21,"start":"2026-03-19","finish":"2026-04-08","pct":0.0,"crit":true,"pred":[]},{"id":59,"wbs":"1.1.7.7.1","level":5,"cat":"Инженерные работы","name":"Прокладка распределительных сетей (вертикальные стояки)","summary":false,"days":15,"start":"2026-03-19","finish":"2026-04-02","pct":0.0,"crit":false,"pred":[24]},{"id":60,"wbs":"1.1.7.7.2","level":5,"cat":"Инженерные работы","name":"Монтаж ВРУ, ГРЩ","summary":false,"days":6,"start":"2026-04-03","finish":"2026-04-08","pct":0.0,"crit":false,"pred":[59]},{"id":61,"wbs":"1.1.7.8","level":4,"cat":"Инженерные работы","name":"АПС (включая оповещание о ЧС)","summary":true,"days":9,"start":"2026-03-19","finish":"2026-03-27","pct":0.0,"crit":true,"pred":[]},{"id":62,"wbs":"1.1.7.8.1","level":5,"cat":"Инженерные работы","name":"Прокладка кабельной продукции (АПС)","summary":false,"days":6,"start":"2026-03-19","finish":"2026-03-24","pct":0.0,"crit":false,"pred":[24]},{"id":63,"wbs":"1.1.7.8.2","level":5,"cat":"Инженерные работы","name":"Монтаж оборудования (АПС)","summary":false,"days":3,"start":"2026-03-25","finish":"2026-03-27","pct":0.0,"crit":false,"pred":[62]},{"id":64,"wbs":"1.1.7.9","level":4,"cat":"Инженерные работы","name":"Видеонаблюдение ","summary":true,"days":9,"start":"2026-03-19","finish":"2026-03-27","pct":0.0,"crit":true,"pred":[]},{"id":65,"wbs":"1.1.7.9.1","level":5,"cat":"Инженерные работы","name":"Прокладка кабельной продукции ","summary":false,"days":6,"start":"2026-03-19","finish":"2026-03-24","pct":0.0,"crit":false,"pred":[24]},{"id":66,"wbs":"1.1.7.9.2","level":5,"cat":"Инженерные работы","name":"Монтаж оборудования ","summary":false,"days":3,"start":"2026-03-25","finish":"2026-03-27","pct":0.0,"crit":false,"pred":[65]},{"id":67,"wbs":"1.1.7.10","level":4,"cat":"Инженерные работы","name":"Домофоны","summary":true,"days":9,"start":"2026-03-19","finish":"2026-03-27","pct":0.0,"crit":true,"pred":[]},{"id":68,"wbs":"1.1.7.10.1","level":5,"cat":"Инженерные работы","name":"Прокладка кабельной продукции (домоф.)","summary":false,"days":6,"start":"2026-03-19","finish":"2026-03-24","pct":0.0,"crit":false,"pred":[24]},{"id":69,"wbs":"1.1.7.10.2","level":5,"cat":"Инженерные работы","name":"Монтаж оборудования (домоф.)","summary":false,"days":3,"start":"2026-03-25","finish":"2026-03-27","pct":0.0,"crit":false,"pred":[68]},{"id":70,"wbs":"1.1.8","level":3,"cat":"Комплексное испытание и Клининг","name":"Комплексное испытание и Клининг","summary":true,"days":9,"start":"2026-04-15","finish":"2026-04-23","pct":0.0,"crit":true,"pred":[]},{"id":71,"wbs":"1.1.8.1","level":4,"cat":"Комплексное испытание и Клининг","name":"Комплексные испытания","summary":false,"days":4,"start":"2026-04-15","finish":"2026-04-18","pct":0.0,"crit":false,"pred":[41]},{"id":72,"wbs":"1.1.8.2","level":4,"cat":"Комплексное испытание и Клининг","name":"Клининговые услуги","summary":false,"days":5,"start":"2026-04-19","finish":"2026-04-23","pct":0.0,"crit":false,"pred":[71]},{"id":73,"wbs":"1.1.9","level":3,"cat":"Благоустройства","name":"Благоустройства","summary":true,"days":85,"start":"2026-03-29","finish":"2026-06-21","pct":0.0,"crit":true,"pred":[]},{"id":74,"wbs":"1.1.9.1","level":4,"cat":"Благоустройства","name":"Вертикальная планировка","summary":false,"days":15,"start":"2026-03-29","finish":"2026-04-12","pct":0.0,"crit":true,"pred":[26]},{"id":75,"wbs":"1.1.9.2","level":4,"cat":"Благоустройства","name":"Бордюры и поребрики","summary":false,"days":20,"start":"2026-04-13","finish":"2026-05-02","pct":0.0,"crit":true,"pred":[74]},{"id":76,"wbs":"1.1.9.3","level":4,"cat":"Благоустройства","name":"Брусчатка","summary":false,"days":20,"start":"2026-05-03","finish":"2026-05-22","pct":0.0,"crit":false,"pred":[75]},{"id":77,"wbs":"1.1.9.4","level":4,"cat":"Благоустройства","name":"Асфальтирование","summary":false,"days":20,"start":"2026-05-03","finish":"2026-05-22","pct":0.0,"crit":true,"pred":[75]},{"id":78,"wbs":"1.1.9.5","level":4,"cat":"Благоустройства","name":"Озеление","summary":false,"days":20,"start":"2026-05-23","finish":"2026-06-11","pct":0.0,"crit":true,"pred":[77]},{"id":79,"wbs":"1.1.9.6","level":4,"cat":"Благоустройства","name":"МАФы","summary":false,"days":25,"start":"2026-05-23","finish":"2026-06-16","pct":0.0,"crit":false,"pred":[77]},{"id":80,"wbs":"1.1.9.7","level":4,"cat":"Благоустройства","name":"Наружное освещение","summary":false,"days":25,"start":"2026-05-23","finish":"2026-06-16","pct":0.0,"crit":false,"pred":[77]},{"id":81,"wbs":"1.1.9.8","level":4,"cat":"Благоустройства","name":"Полив","summary":false,"days":10,"start":"2026-06-12","finish":"2026-06-21","pct":0.0,"crit":true,"pred":[78]}], META={"start":"2025-11-29","finish":"2026-06-21","pct":0.13,"name":"ЖК «Аксай резорт» — Пятно 3,2","src":"ЖК Аксай 3,2.mpp"};
+const LEFTW=440, HEADERH=46, ROWH=24;
+let dayW=4;
+const RU=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+const RUM=["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
+const DAY=86400000;
+const md=s=>new Date(s+"T00:00:00");
+const start=md(META.start), finish=md(META.finish);
+const totalDays=Math.round((finish-start)/DAY)+1;
+const idx={}; TASKS.forEach((t,i)=>idx[t.id]=i);
+const xOf=s=>Math.round((md(s)-start)/DAY)*dayW;
+const fmt=s=>{const d=md(s);return d.getDate()+" "+RU[d.getMonth()]+" "+d.getFullYear();};
+
+const $=id=>document.getElementById(id);
+let bars=[], arrowEls=[], labelEls=[];
+
+function render(){
+  const W=totalDays*dayW;
+  $("months").style.width=W+"px";
+  $("overlay").style.left=LEFTW+"px"; $("overlay").style.top=HEADERH+"px";
+  $("overlay").style.width=W+"px"; $("overlay").style.height=(TASKS.length*ROWH)+"px";
+  $("bars").style.position="absolute"; $("bars").style.inset="0";
+  // month headers
+  let mh="";
+  let y=start.getFullYear(), m=start.getMonth();
+  while(true){
+    const md0=new Date(y,m,1), md1=new Date(y,m+1,1);
+    const s=Math.max(md0,start), e=Math.min(md1,new Date(finish.getTime()+DAY));
+    const x=Math.round((s-start)/DAY)*dayW, w=Math.round((e-s)/DAY)*dayW;
+    mh+=`<div class="mhead" style="left:${x}px;width:${w}px"><b>${RUM[m]}</b> ${String(y).slice(2)}</div>`;
+    if(y===finish.getFullYear()&&m===finish.getMonth())break;
+    m++; if(m>11){m=0;y++;}
+  }
+  $("months").innerHTML=mh;
+  // body rows (left labels)
+  let bh="";
+  TASKS.forEach((t,i)=>{
+    const pc=t.pct==null?"":Math.round(t.pct*100)+"%";
+    const pad=6+(t.level-1)*13;
+    bh+=`<div class="row"><div class="lbl ${t.summary?'sum':''} lvl${t.level}" data-id="${t.id}" style="width:${LEFTW}px">
+      <span class="n">${t.id}</span>
+      <span class="nm" style="padding-left:${pad}px">${esc(t.name)}</span>
+      <span class="pc">${pc}</span></div><div class="lane"></div></div>`;
+  });
+  $("body").innerHTML=bh;
+  // bars
+  let bars_html="";
+  TASKS.forEach((t,i)=>{
+    if(!t.start||!t.finish)return;
+    const x=xOf(t.start), w=Math.max(xOf(t.finish)-x+dayW,3), top=i*ROWH+(ROWH-13)/2;
+    if(t.summary){
+      bars_html+=`<div class="bar sumbar" data-id="${t.id}" style="left:${x}px;width:${w}px;top:${i*ROWH+(ROWH-7)/2}px"></div>`;
+    }else{
+      let cls=t.pct>=1?"done":(t.pct>0?"prog":"todo");
+      const fw=Math.round((t.pct||0)*100);
+      bars_html+=`<div class="bar ${cls} ${t.crit?'critbar':''}" data-id="${t.id}" style="left:${x}px;width:${w}px;top:${top}px">
+        ${cls!=='todo'?`<div class="fill" style="width:${fw}%"></div>`:''}</div>`;
+    }
+  });
+  $("bars").innerHTML=bars_html;
+  // arrows
+  const svg=$("arrows"); svg.setAttribute("width",W); svg.setAttribute("height",TASKS.length*ROWH);
+  svg.innerHTML=`<defs><marker id="ah" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto">
+    <path d="M0,0 L6,3 L0,6 Z" fill="var(--arrow)"/></marker>
+    <marker id="ahc" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto">
+    <path d="M0,0 L6,3 L0,6 Z" fill="var(--crit)"/></marker>
+    <marker id="ahh" markerWidth="8" markerHeight="8" refX="6" refY="3.2" orient="auto">
+    <path d="M0,0 L7,3.2 L0,6.4 Z" fill="var(--navy)"/></marker></defs>`;
+  let ap="";
+  TASKS.forEach((t,i)=>{
+    if(!t.pred||!t.start)return;
+    t.pred.forEach(pid=>{
+      const j=idx[pid]; if(j==null)return; const p=TASKS[j]; if(!p.finish)return;
+      const x1=xOf(p.finish)+( (xOf(p.finish)-xOf(p.start))>=0? dayW:0 ), y1=j*ROWH+ROWH/2;
+      const xe=xOf(p.finish)+dayW, ye=j*ROWH+ROWH/2;
+      const x2=xOf(t.start), y2=i*ROWH+ROWH/2;
+      const e=7; let d;
+      if(x2>=xe+e){ d=`M${xe} ${ye} H${xe+e} V${y2} H${x2}`; }
+      else{ const yo=ye+(y2>ye?ROWH/2:-ROWH/2); d=`M${xe} ${ye} H${xe+e} V${yo} H${x2-e} V${y2} H${x2}`; }
+      const crit=t.crit&&p.crit;
+      ap+=`<path class="arr ${crit?'crit':''}" d="${d}" data-from="${pid}" data-to="${t.id}"
+        marker-end="url(#${crit?'ahc':'ah'})"></path>`;
+    });
+  });
+  svg.insertAdjacentHTML("beforeend",ap);
+  cache();
+}
+function cache(){
+  bars=[...document.querySelectorAll('.bar')].map(el=>({id:+el.dataset.id,el}));
+  arrowEls=[...document.querySelectorAll('path.arr')].map(el=>({from:+el.dataset.from,to:+el.dataset.to,el}));
+  labelEls=[...document.querySelectorAll('.lbl')].map(el=>({id:+el.dataset.id,el}));
+  bind();
+}
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function highlight(id){
+  const conn=new Set([id]);
+  arrowEls.forEach(a=>{ if(a.from===id||a.to===id){a.el.classList.add('hl');conn.add(a.from);conn.add(a.to);
+      a.el.setAttribute('marker-end','url(#ahh)');} });
+  $("grid").classList.add("dim");
+  bars.forEach(b=>{ if(conn.has(b.id))b.el.classList.add('hl'); });
+  labelEls.forEach(l=>{ if(conn.has(l.id))l.el.classList.add('hl'); });
+}
+function clearHl(){
+  $("grid").classList.remove("dim");
+  document.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
+  arrowEls.forEach(a=>a.el.setAttribute('marker-end','url(#'+(a.el.classList.contains('crit')?'ahc':'ah')+')'));
+}
+function tip(t,ev){
+  const p=t.pred.map(pid=>{const j=idx[pid];return j!=null?TASKS[j].name:('#'+pid);});
+  const succ=TASKS.filter(x=>x.pred&&x.pred.includes(t.id)).map(x=>x.name);
+  const el=$("tip");
+  el.innerHTML=`<b>${esc(t.name)}</b> <span style="color:#8b97a3">(№${t.id}, WBS ${t.wbs})</span>
+    <div class="r">${t.start?fmt(t.start):'—'} → ${t.finish?fmt(t.finish):'—'} · ${t.days?t.days+' раб.дн':''} · ${t.pct==null?'':Math.round(t.pct*100)+'%'} ${t.crit?'· <span style="color:var(--crit)">крит.путь</span>':''}</div>
+    ${p.length?`<div class="r">⟵ предшеств.: ${p.map(x=>'<span class=chip>'+esc(x)+'</span>').join('')}</div>`:''}
+    ${succ.length?`<div class="r">⟶ последователи: ${succ.map(x=>'<span class=chip>'+esc(x)+'</span>').join('')}</div>`:''}`;
+  el.style.display="block"; moveTip(ev);
+}
+function moveTip(ev){const el=$("tip");let x=ev.clientX+14,y=ev.clientY+14;
+  if(x+el.offsetWidth>innerWidth)x=ev.clientX-el.offsetWidth-14;
+  if(y+el.offsetHeight>innerHeight)y=ev.clientY-el.offsetHeight-14;
+  el.style.left=x+"px";el.style.top=y+"px";}
+function bind(){
+  const all=[...document.querySelectorAll('.bar,.lbl')];
+  all.forEach(el=>{
+    const id=+el.dataset.id, t=TASKS[idx[id]];
+    el.addEventListener('mouseenter',e=>{highlight(id);tip(t,e);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',()=>{clearHl();$("tip").style.display="none";});
+  });
+}
+document.querySelectorAll('.zoom button').forEach(b=>b.onclick=()=>{
+  const z=+b.dataset.z; dayW=Math.min(14,Math.max(2,dayW+z*1)); render();
+});
+render();
+</script>
+</body>
+</html>
